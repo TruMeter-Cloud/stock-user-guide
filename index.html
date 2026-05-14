@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.png">
+  <title>Trumeter Stock API – User Guide</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{
+      --brand-primary:#0b4ea2;
+      --brand-secondary:#00b0ff;
+      --brand-dark:#0b1b2b;
+      --brand-bg:#0b1b2b;
+      --brand-light:#f5f7fb;
+    }
+
+    .brand-gradient{
+      background:linear-gradient(135deg,var(--brand-bg) 0%, var(--brand-primary) 60%, var(--brand-secondary) 100%);
+    }
+
+    .glass{
+      backdrop-filter:saturate(140%) blur(8px);
+      background:rgba(255,255,255,0.08);
+    }
+
+    .card{
+      background:#fff;
+      border-radius:1rem;
+      box-shadow:0 10px 30px rgba(13,27,43,.08);
+    }
+
+    .kbd{
+      display:inline-block;
+      padding:.125rem .375rem;
+      border-radius:.375rem;
+      background:#0f172a;
+      color:#e2e8f0;
+      font-size:.75rem;
+      margin:2px;
+    }
+
+    details[open] summary svg{
+      transform:rotate(180deg);
+    }
+
+    details > summary{
+      list-style:none;
+    }
+
+    details > summary::-webkit-details-marker{
+      display:none;
+    }
+
+    .code{
+      background:#0b1020;
+      color:#e5e7eb;
+      border-radius:.75rem;
+      padding:1rem;
+      overflow:auto;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:.9rem;
+    }
+
+    .screenshot{
+      margin-top:1rem;
+      border-radius:.75rem;
+      border:1px solid #e5e7eb;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    figcaption{
+      font-size:0.85rem;
+      color:#6b7280;
+      margin-top:0.5rem;
+    }
+
+    .accordion-content {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    details[open] .accordion-content {
+      max-height: 1000px;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-[var(--brand-light)] text-slate-800">
+
+<header class="brand-gradient text-white">
+  <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+    <nav class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img alt="Trumeter logo" src="https://trumeter.com/images/iot/trumeter-cloud-blackback2.png" style="width:250px;"/>
+      </div>
+      <a href="#support" class="text-sm underline/50 hover:underline">Support</a>
+    </nav>
+
+    <div class="mt-10 md:mt-16 grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-3xl md:text-5xl font-bold leading-tight">Trumeter Stock API – User Guide</h1>
+        <p class="mt-4 text-white/90 text-lg">
+          Secure stock availability lookup for distributors. Query item availability across supported warehouse regions using a simple API request.
+        </p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#get-started" class="px-5 py-3 rounded-xl bg-white text-slate-900 font-medium shadow hover:shadow-md transition">Get Started</a>
+          <a href="/swagger.html" class="px-5 py-3 rounded-xl glass border border-white/15 text-white font-medium hover:bg-white/10 transition">View Swagger</a>
+        </div>
+      </div>
+
+      <div class="relative">
+        <div class="absolute -inset-6 rounded-3xl bg-white/10 blur-2xl"></div>
+        <div class="relative p-6 rounded-2xl glass border border-white/15">
+          <p class="text-white/90">Endpoint included</p>
+          <ul class="mt-3 space-y-2 text-white">
+            <li>• <span class="font-medium">GET</span> /api/getStock <span class="text-white/70">(Stock Lookup)</span></li>
+          </ul>
+
+          <p class="mt-4 text-white/80 text-sm">
+            Auth:
+            <span class="kbd">Authorization:</span>
+            <span class="kbd">Bearer &lt;token&gt;</span>
+          </p>
+
+          <p class="mt-3 text-white/80 text-sm">
+            Query:
+            <span class="kbd">item=&lt;item_id&gt;</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-6">
+
+<section class="-mt-12 relative z-10" id="get-started">
+  <div class="card p-6 md:p-8">
+    <h2 class="text-2xl md:text-3xl font-bold">1) Introduction</h2>
+    <p class="mt-3 text-slate-600">
+      The <strong>Trumeter Stock API</strong> provides secure, read-only access to distributor stock availability.
+      It allows approved users to check stock levels for a specific item across configured warehouse regions.
+    </p>
+
+    <ul class="mt-4 list-disc pl-6 text-slate-700">
+      <li>Check stock availability by item ID</li>
+      <li>View stock across supported warehouse regions such as USA, UK, and MY</li>
+      <li>Use secure token-based API authentication</li>
+      <li>Track usage through quota headers</li>
+    </ul>
+  </div>
+</section>
+
+<section class="mt-8 md:mt-12">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <div class="card p-6 md:p-8">
+      <h3 class="text-xl font-semibold">2) Getting Started</h3>
+
+      <div class="mt-4 space-y-4">
+
+        <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+          <summary class="flex cursor-pointer items-center justify-between">
+            <span class="font-medium">Step 1 – Request API Access</span>
+            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+
+          <div class="accordion-content py-4 text-slate-600">
+            <ol class="list-decimal pl-5 space-y-1">
+              <li>Contact Trumeter to request Stock API access.</li>
+              <li>Provide the distributor email address that should be linked to the API token.</li>
+              <li>Trumeter will create an API token and assign a monthly quota.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+          <summary class="flex cursor-pointer items-center justify-between">
+            <span class="font-medium">Step 2 – Receive Your API Token</span>
+            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+
+          <div class="accordion-content pt-4 text-slate-600">
+            <p>
+              Your token will be provided by Trumeter. Keep it secure and do not share it publicly.
+            </p>
+
+            <p class="mt-3">
+              Use the token in the request header:
+            </p>
+
+            <pre class="code mt-3"><code>Authorization: Bearer &lt;your_token_here&gt;</code></pre>
+          </div>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+          <summary class="flex cursor-pointer items-center justify-between">
+            <span class="font-medium">Step 3 – Query Stock by Item ID</span>
+            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+
+          <div class="accordion-content pt-4 text-slate-600">
+            <p>
+              Send a GET request to the stock endpoint and include the item ID as a query parameter.
+            </p>
+
+            <pre class="code mt-3"><code>GET /api/getStock?item=020973-01</code></pre>
+          </div>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+          <summary class="flex cursor-pointer items-center justify-between">
+            <span class="font-medium">Step 4 – Review Quota Headers</span>
+            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+
+          <div class="accordion-content pt-4 text-slate-600">
+            <p>
+              Successful requests return quota details in response headers.
+            </p>
+
+            <ul class="mt-3 list-disc pl-5">
+              <li><span class="kbd">X-Quota-Limit</span> monthly quota limit</li>
+              <li><span class="kbd">X-Quota-Used</span> quota used this month</li>
+              <li><span class="kbd">X-Quota-Remaining</span> remaining quota</li>
+              <li><span class="kbd">X-Quota-Period-Start</span> quota period start date</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+    <div class="card p-6 md:p-8" id="api-example">
+      <h3 class="text-xl font-semibold">3) Using the API</h3>
+
+      <p class="mt-2 text-slate-600">Base URL:</p>
+
+      <pre class="code mt-3"><code>https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net</code></pre>
+
+      <h4 class="mt-6 font-medium">Stock Lookup</h4>
+
+      <pre class="code mt-3"><code>curl -X GET "https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net/api/getStock?item=020973-01" \
+  -H "Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
+
+      <h4 class="mt-6 font-medium">Python Example</h4>
+
+      <pre class="code mt-3"><code>import requests
+
+token = "&lt;your_token_here&gt;"
+item = "020973-01"
+
+url = f"https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net/api/getStock?item={item}"
+
+headers = {
+    "Authorization": f"Bearer {token}"
+}
+
+response = requests.get(url, headers=headers)
+
+print(response.status_code)
+print(response.json())</code></pre>
+
+      <h4 class="mt-6 font-medium">Successful Response</h4>
+
+      <pre class="code mt-3"><code>{
+  "success": true,
+  "data": {
+    "item": "020973-01",
+    "stock": {
+      "USA": 0,
+      "UK": 1675,
+      "MY": 195
+    }
+  }
+}</code></pre>
+
+      <p class="mt-6 text-sm text-slate-500">
+        If a region does not have stock data for the item, it is also returned as <span class="kbd">0</span>.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<section class="mt-8 md:mt-12">
+  <div class="card p-6 md:p-8">
+    <h3 class="text-xl font-semibold">4) Query Parameters</h3>
+
+    <div class="overflow-x-auto mt-4">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b">
+            <th class="py-3 pr-4">Parameter</th>
+            <th class="py-3 pr-4">Required</th>
+            <th class="py-3 pr-4">Description</th>
+            <th class="py-3 pr-4">Example</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-700">
+          <tr class="border-b">
+            <td class="py-3 pr-4"><span class="kbd">item</span></td>
+            <td class="py-3 pr-4">Yes</td>
+            <td class="py-3 pr-4">The item ID to search for.</td>
+            <td class="py-3 pr-4">020973-01</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="mt-8 md:mt-12">
+  <div class="card p-6 md:p-8">
+    <h3 class="text-xl font-semibold">5) Error Responses</h3>
+
+    <div class="overflow-x-auto mt-4">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b">
+            <th class="py-3 pr-4">Status</th>
+            <th class="py-3 pr-4">Code</th>
+            <th class="py-3 pr-4">Meaning</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-700">
+          <tr class="border-b">
+            <td class="py-3 pr-4">401</td>
+            <td class="py-3 pr-4"><span class="kbd">UNAUTHORIZED</span></td>
+            <td class="py-3 pr-4">Token is missing, invalid, inactive, or expired.</td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 pr-4">422</td>
+            <td class="py-3 pr-4"><span class="kbd">INVALID_REQUEST</span></td>
+            <td class="py-3 pr-4">The item query parameter is missing or invalid.</td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 pr-4">404</td>
+            <td class="py-3 pr-4"><span class="kbd">ITEM_NOT_FOUND</span></td>
+            <td class="py-3 pr-4">No stock record was found for the requested item.</td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 pr-4">429</td>
+            <td class="py-3 pr-4"><span class="kbd">QUOTA_EXCEEDED</span></td>
+            <td class="py-3 pr-4">The token has exceeded its monthly quota.</td>
+          </tr>
+          <tr>
+            <td class="py-3 pr-4">503</td>
+            <td class="py-3 pr-4"><span class="kbd">DATA_UNAVAILABLE</span></td>
+            <td class="py-3 pr-4">Stock data could not be loaded from storage.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="mt-6 font-medium">Example Error</h4>
+
+    <pre class="code mt-3"><code>{
+  "success": false,
+  "error": {
+    "code": "ITEM_NOT_FOUND",
+    "message": "No stock record found for item.",
+    "item": "UNKNOWN-ITEM"
+  }
+}</code></pre>
+  </div>
+</section>
+
+<section class="mt-8 md:mt-12 grid md:grid-cols-2 gap-6" id="support">
+  <div class="card p-6 md:p-8">
+    <h3 class="text-xl font-semibold">6) Additional Notes</h3>
+    <ul class="mt-3 list-disc pl-6 text-slate-700 space-y-1">
+      <li>The API is read-only.</li>
+      <li>Each successful stock lookup consumes one quota unit.</li>
+      <li>Quota usage resets monthly.</li>
+      <li>Tokens must be kept private and should not be embedded in public websites.</li>
+      <li>Item IDs are limited to 128 characters.</li>
+    </ul>
+  </div>
+
+  <div class="card p-6 md:p-8">
+    <h3 class="text-xl font-semibold">7) Support</h3>
+    <p class="mt-2 text-slate-600">For assistance:</p>
+    <ul class="mt-2 text-slate-700">
+      <li>
+        <strong>Email:</strong>
+        <a class="text-[var(--brand-primary)] underline" href="mailto:cloud-support@trumeter.com">cloud-support@trumeter.com</a>
+      </li>
+      <li>
+        <strong>Portal:</strong>
+        <a class="text-[var(--brand-primary)] underline" href="https://cloud.trumeter.com" target="_blank" rel="noreferrer">cloud.trumeter.com</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer class="py-12 text-center text-sm text-slate-500">
+  © <span id="year"></span> Trumeter. All rights reserved.
+</footer>
+
+</main>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stock API Swagger</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+
+  <style>
+    body {
+      margin: 0;
+      background: #fafafa;
+    }
+
+    #swagger-ui {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
+  <script>
+    window.onload = function () {
+      const spec = {
+        openapi: "3.0.3",
+
+        info: {
+          title: "Stock API",
+          version: "1.0.0",
+          description: "Customer-facing API for retrieving available stock for a given item across configured warehouse regions."
+        },
+
+        servers: [
+          {
+            url: "https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net",
+            description: "Production"
+          }
+        ],
+
+        paths: {
+          "/api/getStock": {
+            get: {
+              summary: "Get stock by item",
+              description: "Returns available stock for the requested item. Requires a valid token in the X-Authorization header.",
+              operationId: "getStock",
+
+              security: [
+                {
+                  ApiKeyAuth: []
+                }
+              ],
+
+              parameters: [
+                {
+                  name: "item",
+                  in: "query",
+                  required: true,
+                  description: "Item code to look up in the latest stock data.",
+                  schema: {
+                    type: "string",
+                    maxLength: 128,
+                    example: "020973-01"
+                  }
+                }
+              ],
+
+              responses: {
+                "200": {
+                  description: "Stock found successfully",
+                  headers: {
+                    "X-Quota-Limit": {
+                      description: "Monthly quota limit for the token",
+                      schema: {
+                        type: "integer",
+                        example: 1000
+                      }
+                    },
+                    "X-Quota-Used": {
+                      description: "Quota used in the current month",
+                      schema: {
+                        type: "integer",
+                        example: 12
+                      }
+                    },
+                    "X-Quota-Remaining": {
+                      description: "Remaining quota for the current month",
+                      schema: {
+                        type: "integer",
+                        example: 988
+                      }
+                    },
+                    "X-Quota-Period-Start": {
+                      description: "Start date of the quota period",
+                      schema: {
+                        type: "string",
+                        format: "date",
+                        example: "2026-05-01"
+                      }
+                    }
+                  },
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/StockSuccessResponse"
+                      },
+                      example: {
+                        success: true,
+                        data: {
+                          item: "020973-01",
+                          stock: {
+                            USA: 0,
+                            UK: 1675,
+                            MY: 195
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+
+                "401": {
+                  description: "Missing, invalid, inactive, or expired token",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/ErrorResponse"
+                      },
+                      example: {
+                        success: false,
+                        error: {
+                          code: "UNAUTHORIZED",
+                          message: "Missing Bearer token."
+                        }
+                      }
+                    }
+                  }
+                },
+
+                "404": {
+                  description: "Item not found in stock data",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/ErrorResponse"
+                      },
+                      example: {
+                        success: false,
+                        error: {
+                          code: "ITEM_NOT_FOUND",
+                          message: "No stock record found for item.",
+                          item: "UNKNOWN-ITEM"
+                        }
+                      }
+                    }
+                  }
+                },
+
+                "422": {
+                  description: "Invalid request",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/ErrorResponse"
+                      },
+                      example: {
+                        success: false,
+                        error: {
+                          code: "INVALID_REQUEST",
+                          message: "Query param 'item' is required.",
+                          param: "item"
+                        }
+                      }
+                    }
+                  }
+                },
+
+                "429": {
+                  description: "Quota exceeded for current usage period",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/ErrorResponse"
+                      },
+                      example: {
+                        success: false,
+                        error: {
+                          code: "QUOTA_EXCEEDED",
+                          message: "Token quota exceeded.",
+                          quotaLimit: 1000,
+                          quotaUsed: 1000,
+                          periodStart: "2026-05-01"
+                        }
+                      }
+                    }
+                  }
+                },
+
+                "503": {
+                  description: "Stock data unavailable",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/ErrorResponse"
+                      },
+                      example: {
+                        success: false,
+                        error: {
+                          code: "DATA_UNAVAILABLE",
+                          message: "Failed to load stock data from storage."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        components: {
+          securitySchemes: {
+            ApiKeyAuth: {
+              type: "apiKey",
+              in: "header",
+              name: "X-Authorization",
+              description: "Enter: Bearer <your_token_here>"
+            }
+          },
+
+          schemas: {
+            StockSuccessResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                data: {
+                  type: "object",
+                  properties: {
+                    item: {
+                      type: "string",
+                      example: "020973-01"
+                    },
+                    stock: {
+                      type: "object",
+                      properties: {
+                        USA: {
+                          type: "number",
+                          example: 0
+                        },
+                        UK: {
+                          type: "number",
+                          example: 1675
+                        },
+                        MY: {
+                          type: "number",
+                          example: 195
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+
+            ErrorResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: false
+                },
+                error: {
+                  type: "object",
+                  properties: {
+                    code: {
+                      type: "string",
+                      example: "INVALID_REQUEST"
+                    },
+                    message: {
+                      type: "string",
+                      example: "Query param 'item' is required."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+
+      SwaggerUIBundle({
+        spec: spec,
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout"
+      });
+    };
+  </script>
+</body>
+</html>
