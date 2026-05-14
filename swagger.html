@@ -17,6 +17,10 @@
       max-width: 1200px;
       margin: 0 auto;
     }
+
+    .swagger-ui .topbar {
+      display: none;
+    }
   </style>
 </head>
 
@@ -48,7 +52,7 @@
           "/api/getStock": {
             get: {
               summary: "Get stock by item",
-              description: "Returns available stock for the requested item. Requires a valid token in the X-Authorization header.",
+              description: "Returns available stock for the requested item. Requires a valid API token.",
               operationId: "getStock",
 
               security: [
@@ -77,24 +81,15 @@
                   headers: {
                     "X-Quota-Limit": {
                       description: "Monthly quota limit for the token",
-                      schema: {
-                        type: "integer",
-                        example: 1000
-                      }
+                      schema: { type: "integer", example: 1000 }
                     },
                     "X-Quota-Used": {
                       description: "Quota used in the current month",
-                      schema: {
-                        type: "integer",
-                        example: 12
-                      }
+                      schema: { type: "integer", example: 12 }
                     },
                     "X-Quota-Remaining": {
                       description: "Remaining quota for the current month",
-                      schema: {
-                        type: "integer",
-                        example: 988
-                      }
+                      schema: { type: "integer", example: 988 }
                     },
                     "X-Quota-Period-Start": {
                       description: "Start date of the quota period",
@@ -182,7 +177,7 @@
                 },
 
                 "429": {
-                  description: "Quota exceeded for current usage period",
+                  description: "Quota exceeded",
                   content: {
                     "application/json": {
                       schema: {
@@ -230,7 +225,7 @@
               type: "apiKey",
               in: "header",
               name: "X-Authorization",
-              description: "Enter: Bearer <your_token_here>"
+              description: "Paste only your token value. Example: stk_live_xxxxx"
             }
           },
 
@@ -301,10 +296,24 @@
         spec: spec,
         dom_id: "#swagger-ui",
         deepLinking: true,
+
+        requestInterceptor: function (req) {
+          if (req.headers && req.headers["X-Authorization"]) {
+            const token = req.headers["X-Authorization"];
+
+            if (!token.startsWith("Bearer ")) {
+              req.headers["X-Authorization"] = "Bearer " + token;
+            }
+          }
+
+          return req;
+        },
+
         presets: [
           SwaggerUIBundle.presets.apis,
           SwaggerUIStandalonePreset
         ],
+
         layout: "StandaloneLayout"
       });
     };
