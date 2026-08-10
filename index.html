@@ -125,7 +125,7 @@
 
           <p class="mt-4 text-white/80 text-sm">
             Auth:
-            <span class="kbd">Authorization:</span>
+            <span class="kbd">X-Authorization:</span>
             <span class="kbd">Bearer &lt;token&gt;</span>
           </p>
 
@@ -200,7 +200,7 @@
               Use the token in the request header:
             </p>
 
-            <pre class="code mt-3"><code>Authorization: Bearer &lt;your_token_here&gt;</code></pre>
+            <pre class="code mt-3"><code>X-Authorization: Bearer &lt;your_token_here&gt;</code></pre>
           </div>
         </details>
 
@@ -251,12 +251,12 @@
 
       <p class="mt-2 text-slate-600">Base URL:</p>
 
-      <pre class="code mt-3"><code>https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net</code></pre>
+      <pre class="code mt-3"><code>https://stock.cloud.trumeter.com</code></pre>
 
       <h4 class="mt-6 font-medium">Stock Lookup</h4>
 
-      <pre class="code mt-3"><code>curl -X GET "https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net/api/getStock?item=020973-01" \
-  -H "Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
+      <pre class="code mt-3"><code>curl -X GET "https://stock.cloud.trumeter.com/api/getStock?item=020973-01" \
+  -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
 
       <h4 class="mt-6 font-medium">Python Example</h4>
 
@@ -265,10 +265,10 @@
 token = "&lt;your_token_here&gt;"
 item = "020973-01"
 
-url = f"https://stockapi-avhxcwhscfgvdgd3.z03.azurefd.net/api/getStock?item={item}"
+url = f"https://stock.cloud.trumeter.com/api/getStock?item={item}"
 
 headers = {
-    "Authorization": f"Bearer {token}"
+    "X-Authorization": f"Bearer {token}"
 }
 
 response = requests.get(url, headers=headers)
