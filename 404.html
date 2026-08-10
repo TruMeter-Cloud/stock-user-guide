@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Page not found | Trumeter Stock API</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --brand-primary: #0b4ea2;
+      --brand-secondary: #00b0ff;
+      --brand-dark: #0b1b2b;
+      --brand-light: #f5f7fb;
+    }
+
+    .brand-gradient {
+      background:
+        radial-gradient(circle at 82% 18%, rgba(0, 176, 255, 0.3), transparent 30%),
+        linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-primary) 65%, var(--brand-secondary) 100%);
+    }
+
+    .glass {
+      backdrop-filter: saturate(140%) blur(12px);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .error-code {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.85);
+      text-shadow: 0 12px 40px rgba(0, 176, 255, 0.2);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-[var(--brand-light)] text-slate-800">
+  <main class="brand-gradient relative isolate flex min-h-screen overflow-hidden text-white">
+    <div class="absolute -left-28 top-1/4 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
+    <div class="absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-cyan-300/15 blur-3xl"></div>
+
+    <div class="relative z-10 mx-auto flex w-full max-w-6xl flex-col px-6 py-8 md:py-12">
+      <nav class="flex items-center justify-between" aria-label="Main navigation">
+        <a href="/" aria-label="Return to the Trumeter Stock API guide">
+          <img
+            src="https://trumeter.com/images/iot/trumeter-cloud-blackback2.png"
+            alt="Trumeter"
+            class="w-48 md:w-60"
+          />
+        </a>
+        <a href="mailto:cloud-support@trumeter.com" class="text-sm text-white/80 transition hover:text-white">
+          Support
+        </a>
+      </nav>
+
+      <section class="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1fr_0.8fr]" aria-labelledby="error-title">
+        <div class="max-w-2xl">
+          <p class="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-cyan-200">Page not found</p>
+          <h1 id="error-title" class="text-4xl font-bold leading-tight md:text-6xl">
+            This page has gone<br class="hidden sm:block" /> out of stock.
+          </h1>
+          <p class="mt-6 max-w-xl text-lg leading-8 text-white/80">
+            The address may be incorrect, or the documentation page may have moved. Return to the guide to continue exploring the Trumeter Stock API.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/" class="rounded-xl bg-white px-5 py-3 font-semibold text-slate-900 shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-800">
+              Back to user guide
+            </a>
+            <a href="mailto:cloud-support@trumeter.com" class="glass rounded-xl border border-white/20 px-5 py-3 font-semibold text-white transition hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white">
+              Contact support
+            </a>
+          </div>
+        </div>
+
+        <div class="relative mx-auto w-full max-w-md" aria-hidden="true">
+          <div class="absolute -inset-6 rounded-[2rem] bg-white/10 blur-2xl"></div>
+          <div class="glass relative overflow-hidden rounded-3xl border border-white/15 p-8 shadow-2xl shadow-slate-950/20 md:p-10">
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-red-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-200"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span>
+            </div>
+            <div class="error-code mt-8 text-center text-8xl font-black tracking-tight md:text-9xl">404</div>
+            <div class="mt-8 rounded-xl border border-white/10 bg-slate-950/30 p-4 font-mono text-sm text-cyan-100">
+              <span class="text-cyan-300">GET</span> <span id="missing-path">/unknown-page</span><br />
+              <span class="text-white/50">Status:</span> 404 Not Found
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="border-t border-white/10 pt-6 text-sm text-white/60">
+        &copy; <span id="year"></span> Trumeter. All rights reserved.
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('missing-path').textContent = window.location.pathname;
+  </script>
+</body>
+</html>
