@@ -106,7 +106,6 @@
                         $ref: "#/components/schemas/StockSuccessResponse"
                       },
                       example: {
-                        success: true,
                         data: {
                           item: "020973-01",
                           stock: {
@@ -128,7 +127,6 @@
                         $ref: "#/components/schemas/ErrorResponse"
                       },
                       example: {
-                        success: false,
                         error: {
                           code: "UNAUTHORIZED",
                           message: "Missing Bearer token."
@@ -146,7 +144,6 @@
                         $ref: "#/components/schemas/ErrorResponse"
                       },
                       example: {
-                        success: false,
                         error: {
                           code: "ITEM_NOT_FOUND",
                           message: "No stock record found for item.",
@@ -165,7 +162,6 @@
                         $ref: "#/components/schemas/ErrorResponse"
                       },
                       example: {
-                        success: false,
                         error: {
                           code: "INVALID_REQUEST",
                           message: "Query param 'item' is required.",
@@ -184,7 +180,6 @@
                         $ref: "#/components/schemas/ErrorResponse"
                       },
                       example: {
-                        success: false,
                         error: {
                           code: "QUOTA_EXCEEDED",
                           message: "Token quota exceeded.",
@@ -205,7 +200,6 @@
                         $ref: "#/components/schemas/ErrorResponse"
                       },
                       example: {
-                        success: false,
                         error: {
                           code: "DATA_UNAVAILABLE",
                           message: "Failed to load stock data from storage."
@@ -233,10 +227,6 @@
             StockSuccessResponse: {
               type: "object",
               properties: {
-                success: {
-                  type: "boolean",
-                  example: true
-                },
                 data: {
                   type: "object",
                   properties: {
@@ -269,10 +259,6 @@
             ErrorResponse: {
               type: "object",
               properties: {
-                success: {
-                  type: "boolean",
-                  example: false
-                },
                 error: {
                   type: "object",
                   properties: {
